@@ -53,7 +53,19 @@ Seuraavaksi käsiteltiin funktioiden palautusarvoja. Suosituksena on aina sisäl
 
 Tärkeintä on kuitenkin pitää *funktio aitona* (**pure function**), niin että sillä ei ole **sivuvaikutuksia** eikä se muuta arvoja funktion ulkopuolelta.
 
-Seuraavaksi laitetaan funktioita funktioiden. Funktio joka ottaa rvoksi toisen funktion, on korkeamman tason funktio, kuten `forEach()`. 
+Seuraavaksi laitetaan funktioita funktioiden. Funktio joka ottaa rvoksi toisen funktion, on korkeamman tason funktio, kuten `forEach()`. Simpson on erityisen pärinöissä siitä funtkioiden ominaisuudesta, että funktiot korkeamman tason funktioissa viittaavaat pysyvästi korkeamman tason argumentteihin (**closure**), vaikka niitä kutsuttaisiin myöhemmin toisessa paikassa (**scope**).
+
+    function whatAnimalSays(voice) {
+    return function makeVoice(){
+        console.log(voice);
+    };
+    }
+
+    var giraffe = whatAnimalSays( "Kahvilikööri" );
+
+    giraffe();                 // Kahvilikööri
+    giraffe();                 // Kahvilikööri    
+
 
 # Lähteet
 Alickovic, Alan 2024: Bulletproof React. https://github.com/alan2207/bulletproof-react

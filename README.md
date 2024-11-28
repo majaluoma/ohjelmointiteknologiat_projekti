@@ -355,7 +355,10 @@ style = useIconStyle(icon);         // new value of `style` is calculated
 ```
 Nopeana huomiona hookkeja ei saisi ikinä välittää propseina suoraan tai niiden sisöltöä muokata, tämä estää Reactin omat optimaatiot. Ehkä tässä muuten on huomattukin että sana `use` viittaa hookiin, `hande` efektiin. Jos käytät komponentissa hookkia, sen pitää tapahtua aina (idempotenssi), eli hookkeja ei saa siksi kutsua conditionaalisesti tai for -loopeissa.
 
-eslint-plugin-react-hooks
+# Webstore -projektin refaktorointi
+Lopputuloksena tuli noin 800 uutta riviä ja 900 poistui.
+![alt text](image-1.png)
+
 # Lähteet
 
 React 2024: Rules of React. https://react.dev/reference/rules (Luettu 23.11.2024b)  

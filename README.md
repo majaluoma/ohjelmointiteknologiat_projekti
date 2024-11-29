@@ -4,6 +4,18 @@ Tavoitteena on tutustua funktionaalisen ohjelmoinnin filosofiaan sekä tarkastel
 
 Aloitin etsimällä lähteitä. Halusin ensin tutustua ylipäätään funktionaaliseen ohjelmointiin, joten aloitin Kyle Simpsonin (2017) kirjasta Functional-Light JavaScript: Balanced, Pragmatic FP in JavaScript.
 
+Projektin riippuvuuden ja konfigurointitiedostot ovat [repositoriossa file](./konfiguaatioita/)
+
+Projektin tämänhetkinen versio löytyy sivustolta https://commonearth.fi. Verkkokauppaominaisuudet ovat salasanan takana. https://commonearth.fi/demo
+
+
+**Table of Contents**
+
+- [Funktionaalisen ohjelmoinnin perusteita](#funktionaalisen-ohjelmoinnin-perusteita)  
+- [Tapausesimerkki laadukkaasta React -ohjelmoinnista](#tapausesimerkki-laadukkaasta-react--ohjelmoinnista)  
+- [Reaktin säännöt](#reaktin-säännöt)  
+- [Webstore -projektin refaktorointi](#webstore--projektin-refaktorointi)  
+
 ## Funktionaalisen ohjelmoinnin perusteita
 
 Funktionaalinen ohjelmointi pyrkii koodin luettavuuteen eli siihen, että niin kehittäjä kuin muutkin voivat ymmärtää ja siten myös luottaa koodiin. Ohjelmointifilosofian luvataan myös tuottavan vähemmän bugeja. Tässä oleellisena osana on asioiden hyvä nimeäminen - kun näet jonkin funktion, esimerkiksi `map()`, tiedät mitä se tekee, mutta kun näet sanan `for`, joudut usein lukemaan mitä se oikeastaan tekee. Koodissa tämä näkyy myös deklaratiivisuuden lisääntymisenä, kun ohjelman osat kuvaavat lopputulosta, eivätkä prosessia.(Simpson 2017, ch1).
@@ -99,7 +111,7 @@ console.log(addExclamation.name); // addExclamation
 Seuraavaksi otan tauon Simpsonin kirjasta, joka sisältää myös paljon työkaluja niille, jotka eivät pidä itse
 funktionaalisesta ohjelmoinnista, mutta haluavat käyttää funktioita hyvin.
 
-## Tapausesimerkki laadukkaasta React -ohjelmoinnista.
+## Tapausesimerkki laadukkaasta React -ohjelmoinnista
 
 Tutustun välissä Alan Alickovicin ja kumppaneiden (2024) kirjoittamaan Bulletproof React -repositorioon, joka sisältää kattavan kokoelman React-käytänteitä pienistä yksityiskohdista skaalautuvaan infrastruktuuriin. Repositoriolla on 28 tuhatta tykkäystä ja useampi yhteiskirjoittaja.
 
@@ -306,7 +318,7 @@ Mukaillen Alickovic 2024. Muutama rivi poistettu tiiveyden vuoksi.
 
 On koodissa toki eroavaisuuksiakin. Esimerkiksi funktioiden nuolinotaatiota käytetään koodissa myös niin, että funktioista tulee anonyymejä. Jos esimerkiksi laukaistaan lomakke `onSubmit()` ja funktiossa tapahtuisi virhe, näkyisi se virhelogeissa anonyymina funktiona.
 
-## Rules of React
+## Reaktin säännöt
 
 Reactissa on paljon erilaisia ominaisuuksia, joiden ymmärtäminen auttaa rakentamaan tehokkaan käyttöliittymän. Tässä projektissa minulla ei ole kuitenkaan aikaa tustua syvällisesit kaikkiin Reactin tarjoamiin hookkeihin, komponentteihin ja APIhin. Esittelen seuraavaksi mitä Reactin dokumentaatiolla on sanottavaa siitä, millaisia sääntöjä Reaktissa ylipäätään on. Tämän lisäksi perehdyn `useState()`ja `useEffect()` -hookeihin, joilla pärjää jo pitkälle.
 
@@ -353,7 +365,7 @@ style = useIconStyle(icon); // new value of `style` is calculated
 
 Nopeana huomiona hookkeja ei saisi ikinä välittää propseina suoraan tai niiden sisältöä muokata, tämä estää Reactin omat optimaatiot. Ehkä tässä muuten on huomattukin että sana `use` viittaa hookiin, `hande` tapahtumankäsittelijään.
 
-# Webstore -projektin refaktorointi
+## Webstore -projektin refaktorointi
 
 Projektin käytännöllisenä lopputuloksena kirjoitin 800 uutta riviä ja poistin 900 riviä koodia. Refaktoroin verkkokaupan koodia, jonka olimme kirjoittaneet Ohjelmointiprojekti -opintojaksolla (Petrov, Pinkkila, Puukko, Otronen, Ylanne, Majaluoma 2024).
 

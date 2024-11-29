@@ -6,15 +6,16 @@ Aloitin etsimällä lähteitä. Halusin ensin tutustua ylipäätään funktionaa
 
 Projektin riippuvuuden ja konfigurointitiedostot ovat [repositoriossa file](./konfiguaatioita/)
 
-Projektin tämänhetkinen versio löytyy sivustolta https://commonearth.fi. Verkkokauppaominaisuudet ovat salasanan takana. https://commonearth.fi/demo
+Projektin tämänhetkinen versio löytyy sivustolta https://commonearth.fi.   Verkkokauppaominaisuudet ovat salasanan takana. https://commonearth.fi/demo  
+Raportin video-osa (nähtävissä haaga-helian käyttiksillä): https://haagahelia-my.sharepoint.com/:v:/g/personal/bgu135_myy_haaga-helia_fi/EUQHVCbfTSdImwYeIg2cTCUB9ebxvqdlx0p9uk4JOFzXlg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=j1Yhew  
 
 
 **Table of Contents**
 
-- [Funktionaalisen ohjelmoinnin perusteita](#funktionaalisen-ohjelmoinnin-perusteita)  
-- [Tapausesimerkki laadukkaasta React -ohjelmoinnista](#tapausesimerkki-laadukkaasta-react--ohjelmoinnista)  
-- [Reaktin säännöt](#reaktin-säännöt)  
-- [Webstore -projektin refaktorointi](#webstore--projektin-refaktorointi)  
+-   [Funktionaalisen ohjelmoinnin perusteita](#funktionaalisen-ohjelmoinnin-perusteita)
+-   [Tapausesimerkki laadukkaasta React -ohjelmoinnista](#tapausesimerkki-laadukkaasta-react--ohjelmoinnista)
+-   [Reaktin säännöt](#reaktin-säännöt)
+-   [Webstore -projektin refaktorointi](#webstore--projektin-refaktorointi)
 
 ## Funktionaalisen ohjelmoinnin perusteita
 
@@ -540,63 +541,12 @@ Tavoite oli myös muuttaa koodin osia, jotka kuvasivat sitä miten tehdään sel
 ```js
 //Uusi
 
-const handleCartChange = async (product: Product, delta: number) => {
-  /**We have to inform other components taht buy action is treiggered. This allows
-   * for flashing shopping cart for example
-   *
-   */
-  setBuyActionTriggered(true);
-
-  //If user doesnt have a cart session, it is created this instant
-  if (cart === null) {
-    await createNewCartSession(product);
-    await getCart();
-  }
-  // I should read Simpson's book chapter about async and funtional programming to deal with this situation better
-  if (cart === null) { 
-    return;
-  }
-
-  let cartMutation: CreateCart = { ...cart } as CreateCart;
-
-  if (!cart.cartRows.some((row) => row.productId === product.id)) {
-    cartMutation.cartRows.push({
-      productQty: delta,
-      rowPrice: product.price,
-      productId: product.id,
-    });
-  }
-
-  cartMutation = {
-    ...cart,
-    cartPrice: cart.cartPrice + delta * product.price,
-    cartRows: modifyProductsRowsQuantity(cart.cartRows, product, delta),
-  };
-
-  await putCart(cartMutation);
-
-  await getCart();
-};
-
-const createNewCartSession = async (product: Product, delta: number) => {
-    const newCartRow: CreateCartRow = {
-      productQty: delta,
-      rowPrice: product.price,
-      productId: product.id,
-    };
-    const newCart = {
-      cartPrice: product.price,
-      cartRows: [newCartRow],
-    };
-    return await postCart(newCart);
-  };
-
 //Adds or substracts product quantity in cart
-const modifyProductsRowsQuantity = (
+const modifyProductAmount = (
   cartRows: CreateCartRow[],
   product: Product,
   delta: number,
-) => {
+) : CreateCartRow[] => {
   const newRows = cartRows.map((row) => {
     if (row.productId === product.id && row.productQty + delta >= 0) {
       return {
@@ -611,6 +561,43 @@ const modifyProductsRowsQuantity = (
 
   return newRows.filter((row) => row.productQty > 0);
 };
+
+const handleCartChange = async (product: Product, delta: number) => {
+  /**We have to inform other components taht buy action is treiggered. This allows
+   * for flashing shopping cart for example
+   *
+   */
+  setBuyActionTriggered(true);
+
+  const originalCart = cart || {
+    cartPrice: 0,
+    cartRows: [],
+  };
+  if (cart === null) {
+    await postCart(originalCart);
+  }
+
+  let cartMutation: CreateCart = { ...originalCart } as CreateCart;
+
+  if (!cartMutation.cartRows.some((row) => row.productId === product.id)) {
+    cartMutation.cartRows.push({
+      productQty: 0,
+      rowPrice: 0,
+      productId: product.id,
+    });
+  }
+
+  cartMutation = {
+    ...cartMutation,
+    cartPrice: originalCart.cartPrice + delta * product.price,
+    cartRows: modifyProductAmount(originalCart.cartRows, product, delta),
+  };
+
+  await putCart(cartMutation);
+
+  await getCart();
+};
+
 ```
 
 Pyrin pitämään komponentit sellaisina, että ne palauttavat aina saman arvon oletuksena. Esim alla cartIsEmpty oli siirretty tapahtumaan vasta renderöinnin jälkeen. Tässä ei tarvittu `cleanup` -funktiota.
@@ -628,6 +615,7 @@ const isCartEmpty = !cart || cart.cartRows.length === 0;
 }
 
 ```
+
 ```ts
 //Uusi
 export default function CartDrawer(props : CartDrawerProps) {
@@ -643,12 +631,11 @@ useEffect (() => {
 }
 ```
 
-Loppujen lopuksi funktionaalisen refaktorointi oli enemmän sitä, että hyödynsin Alickovicin oppeja yleisesti siitä, miten React projekti kannattaa organisoida. Mielestäni projektissamme oli aika vähän sellaisia rakenteita, jotka suoraan olisin tunnistanut funktionaalisen ohjelmoinnin vastaisiksi. 
+Loppujen lopuksi funktionaalisen refaktorointi oli enemmän sitä, että hyödynsin Alickovicin oppeja yleisesti siitä, miten React projekti kannattaa organisoida. Mielestäni projektissamme oli aika vähän sellaisia rakenteita, jotka suoraan olisin tunnistanut funktionaalisen ohjelmoinnin vastaisiksi.
 
 Ainoan poikkeuksen tekivät hande -tyyppiset tapahtumakäsittelijät, jotka kuitenkin olivat iso osa komponenttien funktiorepertuaaria. Nämä eivät olleet puhtaita funktioita sillä niillä oli usein sivuvaikutuksia ja ne saattoivat palauttaa eri arvoja.
 
 Mielenkiintoni kuitenkin tätä aihetta kohtaan lisääntyi, ja vaikka päätinkin palauttaa tämän projektin nyt kurssia varten, jatkan varmaankin Simpsonin kirjaan tutustumista muulla ajalla.
-
 
 # Lähteet
 
